@@ -70,7 +70,7 @@
         .icon {
             font-size: 18px;
         }
-        /* ดีไซน์ปุ่ม Toggle Switch */
+        /* ปุ่มสวิตช์ Toggle Switch */
         .switch {
             position: relative;
             display: inline-block;
@@ -106,7 +106,7 @@
         input:checked + .slider:before {
             transform: translateX(26px);
         }
-        /* ส่วนแสดงผลข้อมูลผู้พัฒนาระบบ */
+        /* ข้อมูลผู้พัฒนา */
         .footer {
             margin-top: 35px;
             padding-top: 20px;
@@ -184,14 +184,14 @@
         </div>
 
         <div class="footer">
-            <div class="dev-title">ผู้พัฒาระบบ</div>
+            <div class="dev-title">ผู้พัฒนาระบบ</div>
             <div class="dev-name">นายปฐมพร นาดี</div>
             <div class="dev-college">สาขาอิเล็กทรอนิกส์ วิทยาลัยสารพัดช่างศรีสะเกษ</div>
         </div>
     </div>
 
     <script>
-        // *** ตั้งค่า Firebase Config ***
+        // *** การตั้งค่า Firebase Config ที่เชื่อมกับฐานข้อมูลของคุณ ***
         const firebaseConfig = {
             apiKey: "AIzaSyCXKM44f0JodWD_mdUytWOQWScSs1vgAcE",
             authDomain: "mynut095.firebaseapp.com",
@@ -203,17 +203,17 @@
             measurementId: "G-1JZYVG90GH"
         };
 
-        // เริ่มต้นการใช้งาน Firebase
+        // เริ่มต้นการใช้งานฐานข้อมูล Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // ฟังก์ชันส่งค่าไปยัง Firebase เมื่อมีการเปลี่ยนสถานะสวิตช์
+        // ฟังก์ชันเมื่อมีการเปิด/ปิดสวิตช์ จะอัปเดตข้อมูลไปยัง Firebase โฟลเดอร์ SmartHome
         function toggleRelay(channel, isChecked) {
             const value = isChecked ? 1 : 0;
             database.ref('SmartHome/' + channel).set(value);
         }
 
-        // ดึงสถานะปัจจุบันจาก Firebase มาอัปเดตบนหน้าเว็บแบบ Realtime
+        // ฟังชันก์ตรวจจับและดึงค่าจาก Firebase แบบ Realtime มาแสดงผลบนหน้าเว็บ
         database.ref('SmartHome').on('value', (snapshot) => {
             const data = snapshot.val();
             if(data) {
