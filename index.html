@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home IoT Control Panel</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #0a0f1d;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background: rgba(20, 30, 55, 0.85);
+            border: 2px solid #00f2fe;
+            border-radius: 24px;
+            padding: 35px 25px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.3);
+            text-align: center;
+        }
+        h1 {
+            color: #00f2fe;
+            font-size: 26px;
+            letter-spacing: 1.5px;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.6);
+        }
+        .subtitle {
+            color: #8b949e;
+            font-size: 13px;
+            margin-bottom: 35px;
+            text-transform: uppercase;
+        }
+        .control-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #121829;
+            padding: 18px 20px;
+            margin-bottom: 18px;
+            border-radius: 16px;
+            border: 1px solid #1f2a45;
+            transition: 0.3s;
+        }
+        .control-row:hover {
+            border-color: #00f2fe;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);
+        }
+        .channel-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+        }
+        .icon {
+            font-size: 18px;
+        }
+        /* ดีไซน์ปุ่ม Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #2a354d;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px; width: 26px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #00f2fe;
+            box-shadow: 0 0 15px #00f2fe;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        /* ส่วนแสดงผลข้อมูลผู้พัฒนาระบบ */
+        .footer {
+            margin-top: 35px;
+            padding-top: 20px;
+            border-top: 1px dashed rgba(0, 242, 254, 0.2);
+            line-height: 1.6;
+        }
+        .dev-title {
+            color: #00f2fe;
+            font-weight: bold;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px rgba(0, 242, 254, 0.5);
+            margin-bottom: 4px;
+        }
+        .dev-name {
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        .dev-college {
+            color: #8b949e;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>SMART HOME</h1>
+        <div class="subtitle">ESP8266 IoT Control Panel</div>
+
+        <div class="control-row">
+            <div class="channel-info">
+                <span class="icon">💡</span>
+                <span>ช่องที่ 1 (D1)</span>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="ch1" onchange="toggleRelay('ch1', this.checked)">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="control-row">
+            <div class="channel-info">
+                <span class="icon">🌀</span>
+                <span>ช่องที่ 2 (D2)</span>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="ch2" onchange="toggleRelay('ch2', this.checked)">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="control-row">
+            <div class="channel-info">
+                <span class="icon">📺</span>
+                <span>ช่องที่ 3 (D5)</span>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="ch3" onchange="toggleRelay('ch3', this.checked)">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="control-row">
+            <div class="channel-info">
+                <span class="icon">🔌</span>
+                <span>ช่องที่ 4 (D6)</span>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="ch4" onchange="toggleRelay('ch4', this.checked)">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="footer">
+            <div class="dev-title">ผู้พัฒาระบบ</div>
+            <div class="dev-name">นายปฐมพร นาดี</div>
+            <div class="dev-college">สาขาอิเล็กทรอนิกส์ วิทยาลัยสารพัดช่างศรีสะเกษ</div>
+        </div>
+    </div>
+
+    <script>
+        // *** ตั้งค่า Firebase Config ***
+        const firebaseConfig = {
+            apiKey: "AIzaSyCXKM44f0JodWD_mdUytWOQWScSs1vgAcE",
+            authDomain: "mynut095.firebaseapp.com",
+            databaseURL: "https://mynut095-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "mynut095",
+            storageBucket: "mynut095.firebasestorage.app",
+            messagingSenderId: "489025440767",
+            appId: "1:489025440767:web:c3bc0db2725791552bf5ca",
+            measurementId: "G-1JZYVG90GH"
+        };
+
+        // เริ่มต้นการใช้งาน Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // ฟังก์ชันส่งค่าไปยัง Firebase เมื่อมีการเปลี่ยนสถานะสวิตช์
+        function toggleRelay(channel, isChecked) {
+            const value = isChecked ? 1 : 0;
+            database.ref('SmartHome/' + channel).set(value);
+        }
+
+        // ดึงสถานะปัจจุบันจาก Firebase มาอัปเดตบนหน้าเว็บแบบ Realtime
+        database.ref('SmartHome').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if(data) {
+                if(data.ch1 !== undefined) document.getElementById('ch1').checked = (data.ch1 === 1);
+                if(data.ch2 !== undefined) document.getElementById('ch2').checked = (data.ch2 === 1);
+                if(data.ch3 !== undefined) document.getElementById('ch3').checked = (data.ch3 === 1);
+                if(data.ch4 !== undefined) document.getElementById('ch4').checked = (data.ch4 === 1);
+            }
+        });
+    </script>
+</body>
+</html>
