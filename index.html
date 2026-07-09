@@ -3,79 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Home IoT Control Panel</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
+    <title>SMART HOME - IOT CONTROL PANEL</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        /* ตั้งค่าพื้นฐานและพื้นหลัง */
         body {
-            background-color: #0a0f1d;
+            background-color: #0b111e; /* สีพื้นหลังสไตล์ Dark */
             color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            margin: 0;
         }
-        .container {
-            background: rgba(20, 30, 55, 0.85);
-            border: 2px solid #00f2fe;
-            border-radius: 24px;
-            padding: 35px 25px;
+
+        /* โครงสร้างกล่องหลัก (Card) */
+        .control-panel {
+            background-color: #151b29;
             width: 100%;
-            max-width: 400px;
-            box-shadow: 0 0 25px rgba(0, 242, 254, 0.3);
+            max-width: 380px;
+            padding: 30px 20px;
+            border-radius: 20px;
+            border: 2px solid #00f2fe; /* ขอบสีฟ้า */
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+        }
+
+        /* ส่วนหัวเรื่อง */
+        .header {
             text-align: center;
+            margin-bottom: 30px;
         }
-        h1 {
+        .header h1 {
             color: #00f2fe;
-            font-size: 26px;
+            margin: 0;
+            font-size: 24px;
             letter-spacing: 1.5px;
-            margin-bottom: 5px;
-            text-shadow: 0 0 10px rgba(0, 242, 254, 0.6);
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
         }
-        .subtitle {
-            color: #8b949e;
-            font-size: 13px;
-            margin-bottom: 35px;
-            text-transform: uppercase;
+        .header p {
+            color: #8c98a4;
+            margin: 5px 0 0 0;
+            font-size: 12px;
+            letter-spacing: 0.5px;
         }
-        .control-row {
+
+        /* กล่องของแต่ละช่อง (Channel Row) */
+        .channel-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #121829;
-            padding: 18px 20px;
-            margin-bottom: 18px;
-            border-radius: 16px;
-            border: 1px solid #1f2a45;
-            transition: 0.3s;
+            background-color: #1a2235;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .control-row:hover {
-            border-color: #00f2fe;
-            box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);
-        }
+
         .channel-info {
             display: flex;
             align-items: center;
-            gap: 12px;
             font-size: 16px;
+            font-weight: 500;
         }
-        .icon {
-            font-size: 18px;
+        .channel-info span.icon {
+            margin-right: 15px;
+            font-size: 20px;
         }
-        /* ปุ่มสวิตช์ Toggle Switch */
+
+        /* CSS สำหรับปุ่ม Toggle Switch */
         .switch {
             position: relative;
             display: inline-block;
-            width: 60px;
-            height: 34px;
+            width: 50px;
+            height: 26px;
         }
         .switch input {
             opacity: 0;
@@ -86,143 +86,138 @@
             position: absolute;
             cursor: pointer;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #2a354d;
+            background-color: #2c3e50;
             transition: .4s;
             border-radius: 34px;
         }
         .slider:before {
             position: absolute;
             content: "";
-            height: 26px; width: 26px;
-            left: 4px; bottom: 4px;
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
             background-color: white;
             transition: .4s;
             border-radius: 50%;
         }
         input:checked + .slider {
-            background-color: #00f2fe;
-            box-shadow: 0 0 15px #00f2fe;
+            background-color: #3b82f6; /* สีเมื่อเปิด */
         }
         input:checked + .slider:before {
-            transform: translateX(26px);
+            transform: translateX(24px);
         }
-        /* ข้อมูลผู้พัฒนา */
+
+        /* ส่วนท้าย (Footer) */
         .footer {
-            margin-top: 35px;
+            margin-top: 30px;
+            text-align: center;
+            border-top: 1px dashed #2c3e50;
             padding-top: 20px;
-            border-top: 1px dashed rgba(0, 242, 254, 0.2);
-            line-height: 1.6;
         }
-        .dev-title {
-            color: #00f2fe;
-            font-weight: bold;
-            font-size: 13px;
-            letter-spacing: 1px;
-            text-shadow: 0 0 8px rgba(0, 242, 254, 0.5);
-            margin-bottom: 4px;
-        }
-        .dev-name {
-            color: #ffffff;
-            font-size: 15px;
-            font-weight: 500;
-            margin-bottom: 2px;
-        }
-        .dev-college {
-            color: #8b949e;
-            font-size: 12px;
-        }
+        .footer .role { color: #00f2fe; font-size: 14px; font-weight: bold; margin-bottom: 5px; }
+        .footer .name { font-size: 14px; font-weight: bold; margin-bottom: 5px; }
+        .footer .school { color: #8c98a4; font-size: 12px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>SMART HOME</h1>
-        <div class="subtitle">ESP8266 IoT Control Panel</div>
+    <div class="control-panel">
+        <div class="header">
+            <h1>SMART HOME</h1>
+            <p>ESP8266 IOT CONTROL PANEL</p>
+        </div>
 
-        <div class="control-row">
-            <div class="channel-info">
-                <span class="icon">💡</span>
-                <span>ช่องที่ 1 (D1)</span>
-            </div>
+        <div class="channel-row">
+            <div class="channel-info"><span class="icon">💡</span> ช่องที่ 1 (D1)</div>
             <label class="switch">
-                <input type="checkbox" id="ch1" onchange="toggleRelay('ch1', this.checked)">
+                <input type="checkbox" id="ch1">
                 <span class="slider"></span>
             </label>
         </div>
 
-        <div class="control-row">
-            <div class="channel-info">
-                <span class="icon">🌀</span>
-                <span>ช่องที่ 2 (D2)</span>
-            </div>
+        <div class="channel-row">
+            <div class="channel-info"><span class="icon">🌀</span> ช่องที่ 2 (D2)</div>
             <label class="switch">
-                <input type="checkbox" id="ch2" onchange="toggleRelay('ch2', this.checked)">
+                <input type="checkbox" id="ch2">
                 <span class="slider"></span>
             </label>
         </div>
 
-        <div class="control-row">
-            <div class="channel-info">
-                <span class="icon">📺</span>
-                <span>ช่องที่ 3 (D5)</span>
-            </div>
+        <div class="channel-row">
+            <div class="channel-info"><span class="icon">📺</span> ช่องที่ 3 (D5)</div>
             <label class="switch">
-                <input type="checkbox" id="ch3" onchange="toggleRelay('ch3', this.checked)">
+                <input type="checkbox" id="ch3">
                 <span class="slider"></span>
             </label>
         </div>
 
-        <div class="control-row">
-            <div class="channel-info">
-                <span class="icon">🔌</span>
-                <span>ช่องที่ 4 (D6)</span>
-            </div>
+        <div class="channel-row">
+            <div class="channel-info"><span class="icon">🔌</span> ช่องที่ 4 (D6)</div>
             <label class="switch">
-                <input type="checkbox" id="ch4" onchange="toggleRelay('ch4', this.checked)">
+                <input type="checkbox" id="ch4">
                 <span class="slider"></span>
             </label>
         </div>
 
         <div class="footer">
-            <div class="dev-title">ผู้พัฒนาระบบ</div>
-            <div class="dev-name">นายปฐมพร นาดี</div>
-            <div class="dev-college">สาขาอิเล็กทรอนิกส์ วิทยาลัยสารพัดช่างศรีสะเกษ</div>
+            <div class="role">ผู้พัฒนาระบบ</div>
+            <div class="name">นายปฐมพร นาดี</div>
+            <div class="school">สาขาอิเล็กทรอนิกส์ วิทยาลัยสารพัดช่างศรีสะเกษ</div>
         </div>
     </div>
 
-    <script>
-        // *** การตั้งค่า Firebase Config ที่เชื่อมกับฐานข้อมูลของคุณ ***
+    <script type="module">
+        // 1. นำเข้า Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        // 2. ตั้งค่า Firebase Config ของคุณ (นำมาจาก Firebase Console)
+        // ⚠️ สำคัญ: นำค่าจากโปรเจ็กต์ของคุณมาแทนที่ตรงนี้ทั้งหมด
         const firebaseConfig = {
-            apiKey: "AIzaSyCXKM44f0JodWD_mdUytWOQWScSs1vgAcE",
-            authDomain: "mynut095.firebaseapp.com",
-            databaseURL: "https://mynut095-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "mynut095",
-            storageBucket: "mynut095.firebasestorage.app",
-            messagingSenderId: "489025440767",
-            appId: "1:489025440767:web:c3bc0db2725791552bf5ca",
-            measurementId: "G-1JZYVG90GH"
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com", // จำเป็นต้องมีสำหรับ Realtime Database
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
         };
 
-        // เริ่มต้นการใช้งานฐานข้อมูล Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+        // 3. เริ่มต้นการทำงานของ Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-        // ฟังก์ชันเมื่อมีการเปิด/ปิดสวิตช์ จะอัปเดตข้อมูลไปยัง Firebase โฟลเดอร์ SmartHome
-        function toggleRelay(channel, isChecked) {
-            const value = isChecked ? 1 : 0;
-            database.ref('SmartHome/' + channel).set(value);
+        // Path ในฐานข้อมูล (กำหนดชื่อ Node หลัก เช่น "SmartHome")
+        const dbPath = "SmartHome"; 
+
+        // 4. ฟังก์ชันสำหรับรับค่าจากสวิตช์หน้าเว็บ แล้วส่งไปอัปเดตบน Firebase
+        function setupToggle(elementId, dbChildNode) {
+            const toggleElement = document.getElementById(elementId);
+            
+            // เมื่อมีการคลิกเปลี่ยนสถานะสวิตช์
+            toggleElement.addEventListener('change', (e) => {
+                const status = e.target.checked; // จะได้ค่า true หรือ false
+                set(ref(db, `${dbPath}/${dbChildNode}`), status)
+                    .then(() => console.log(`${dbChildNode} set to ${status}`))
+                    .catch((error) => console.error("Error updating data: ", error));
+            });
+
+            // รอรับค่าที่อัปเดตจาก Firebase เพื่อมาแสดงผลบนหน้าเว็บให้ตรงกัน (Real-time sync)
+            onValue(ref(db, `${dbPath}/${dbChildNode}`), (snapshot) => {
+                const data = snapshot.val();
+                if (data !== null) {
+                    toggleElement.checked = data; // อัปเดตสวิตช์หน้าเว็บตามฐานข้อมูล
+                }
+            });
         }
 
-        // ฟังชันก์ตรวจจับและดึงค่าจาก Firebase แบบ Realtime มาแสดงผลบนหน้าเว็บ
-        database.ref('SmartHome').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if(data) {
-                if(data.ch1 !== undefined) document.getElementById('ch1').checked = (data.ch1 === 1);
-                if(data.ch2 !== undefined) document.getElementById('ch2').checked = (data.ch2 === 1);
-                if(data.ch3 !== undefined) document.getElementById('ch3').checked = (data.ch3 === 1);
-                if(data.ch4 !== undefined) document.getElementById('ch4').checked = (data.ch4 === 1);
-            }
-        });
+        // 5. เรียกใช้ฟังก์ชันสำหรับทั้ง 4 ช่อง (เชื่อม id ของ html กับชื่อ node ใน firebase)
+        setupToggle('ch1', 'Channel1'); // ช่อง 1 จะถูกเก็บที่ SmartHome/Channel1
+        setupToggle('ch2', 'Channel2'); // ช่อง 2 จะถูกเก็บที่ SmartHome/Channel2
+        setupToggle('ch3', 'Channel3'); // ช่อง 3 จะถูกเก็บที่ SmartHome/Channel3
+        setupToggle('ch4', 'Channel4'); // ช่อง 4 จะถูกเก็บที่ SmartHome/Channel4
+
     </script>
 </body>
 </html>
